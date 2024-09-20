@@ -6,6 +6,7 @@ import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Header;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.sidenav.SideNav;
@@ -13,6 +14,7 @@ import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import org.vaadin.lineawesome.LineAwesomeIcon;
+import com.vaadin.flow.server.VaadinSession;
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -25,6 +27,7 @@ public class MainLayout extends AppLayout {
         setPrimarySection(Section.DRAWER);
         addDrawerContent();
         addHeaderContent();
+        injectCustomCss();
     }
 
     private void addHeaderContent() {
@@ -34,7 +37,16 @@ public class MainLayout extends AppLayout {
         viewTitle = new H1();
         viewTitle.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
 
-        addToNavbar(true, toggle, viewTitle);
+        Header header = new Header(toggle, viewTitle);
+        addToNavbar(true, header);
+    }
+
+    private void injectCustomCss() {
+        String customCss = (String) VaadinSession.getCurrent().getAttribute("customCss");
+        if (customCss != null) {
+            Html style = new Html("<style>" + customCss + "</style>");
+            getElement().appendChild(style.getElement());
+        }
     }
 
     private void addDrawerContent() {
